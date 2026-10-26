@@ -1,0 +1,9 @@
+# Build environment for TardisDB: Ubuntu 20.04 still ships LLVM 7
+FROM ubuntu:20.04
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        cmake g++ make git ca-certificates \
+        llvm-7 llvm-7-dev zlib1g-dev libtinfo-dev \
+        libboost-dev libreadline-dev gdb \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /src
