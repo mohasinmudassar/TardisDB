@@ -4,6 +4,7 @@
 #include <climits>
 #include <algorithm>
 #include <vector>
+#include <cstring>
 
 #include <llvm/IR/TypeBuilder.h>
 
@@ -97,7 +98,20 @@ bool BitmapTable::isSet(tid_t tid, unsigned column) const
 
 void BitmapTable::resize()
 {
-    throw NotImplementedException("BitmapTable::resize()");
+    // Grow every row by one byte (= 8 more bit columns) and copy the old bits over.
+    const size_t oldRowSize = _data->getElementSize();
+    const size_t newRowSize = oldRowSize + 1;
+    const size_t rowCount = _data->size();
+
+    auto newData = std::make_unique<Vector>(newRowSize);
+    for (size_t tid = 0; tid < rowCount; ++tid) {
+        auto * newRow = static_cast<uint8_t *>(newData->reserve_back());
+        std::memcpy(newRow, _data->at(tid), oldRowSize);
+        newRow[oldRowSize] = 0; // new columns start out unset
+    }
+
+    _data = std::move(newData);
+    _availableCount = static_cast<unsigned>(newRowSize * 8);
 }
 
 static cg_bool_t isSet_gen(BitmapTable & table, cg_tid_t tid, cg_unsigned_t column)
