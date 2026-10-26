@@ -9,8 +9,12 @@
 #include <llvm/IR/TypeBuilder.h>
 
 // target data layout:
+// target data layout (must match what LLVM 7 uses for the host CPU):
 #if defined (__amd64__)
 #define LAYOUT_DESCRIPTION "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+#elif defined (__aarch64__) && defined (__linux__)
+// ARM64 Linux, e.g. Docker/Colima on Apple Silicon
+#define LAYOUT_DESCRIPTION "e-m:e-i8:8:32-i16:16:32-i64:64-i128:128-n32:64-S128"
 #else
 #error "Layout description not available for this platform"
 #endif
