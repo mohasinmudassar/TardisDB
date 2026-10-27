@@ -15,16 +15,23 @@ void prompt()
 {
     std::unique_ptr<Database> currentdb = std::make_unique<Database>();
     while (true) {
-        try {
-            const char *prompt = ">>> ";
-            const char *input = readline(prompt);
-            add_history(input);
-            if (std::string(input) == "quit") {
-                break;
-            }
+        char *input = readline(">>> ");
+        if (input == nullptr) { // end of input: Ctrl-D or end of a piped file
+            break;
+        }
+        std::string line(input);
+        free(input); // readline allocates the line, we must free it
 
-            QueryCompiler::compileAndExecute(input,*currentdb);
-            free((void*)input);
+        if (line == "quit") {
+            break;
+        }
+        if (line.empty()) {
+            continue;
+        }
+        add_history(line.c_str());
+
+        try {
+            QueryCompiler::compileAndExecute(line, *currentdb);
         } catch (const std::exception & e) {
             fprintf(stderr, "Exception: %s\n", e.what());
         }
