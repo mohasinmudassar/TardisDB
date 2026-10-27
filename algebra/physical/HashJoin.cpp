@@ -77,7 +77,8 @@ llvm::Value * genCreateListHeader(cg_voidptr_t memoryPool)
 //    Functions::genPrintfCall("allocated headerPtr: %p\n", mem);
 
     llvm::Value * headerLastFieldPtr = codeGen->CreateStructGEP(headerTy, headerPtr, 1);
-    codeGen->CreateStore(headerPtr, headerLastFieldPtr);
+    // the field is declared as i8*, so cast the header pointer before storing it
+    codeGen->CreateStore(codeGen->CreatePointerCast(headerPtr, llvm::Type::getInt8PtrTy(codeGen->getContext())), headerLastFieldPtr);
 
     return headerPtr;
 }
@@ -134,7 +135,8 @@ void genAppendEntryToList(cg_voidptr_t memoryPool, llvm::Value * headerPtr, llvm
 //    Functions::genPrintfCall("new length: %lu\n", length);
 
     // update last node:
-    codeGen->CreateStore(node, headerLastPtr);
+    // headerLastPtr is an i8* to the last header/node; its first field is the "next" pointer
+    codeGen->CreateStore(node, codeGen->CreatePointerCast(headerLastPtr, llvm::Type::getInt8PtrTy(codeGen->getContext())->getPointerTo()));
     codeGen->CreateStore(node, headerLastFieldPtr);
 
     // initialise node:
