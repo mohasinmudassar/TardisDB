@@ -1,0 +1,39 @@
+>>> create table kv (k integer not null, v integer not null);
+>>> insert into kv (k, v) values (1, 0);
+>>> create branch b1 from master;
+Created Branch 1
+>>> update kv version b1 set v = 1 where k = 1;
+>>> create branch b2 from master;
+Created Branch 2
+>>> update kv version b2 set v = 2 where k = 1;
+>>> create branch b3 from master;
+Created Branch 3
+>>> update kv version b3 set v = 3 where k = 1;
+>>> create branch b4 from master;
+Created Branch 4
+>>> update kv version b4 set v = 4 where k = 1;
+>>> create branch b5 from master;
+Created Branch 5
+>>> update kv version b5 set v = 5 where k = 1;
+>>> create branch b6 from master;
+Created Branch 6
+>>> update kv version b6 set v = 6 where k = 1;
+>>> create branch b7 from master;
+Created Branch 7
+>>> update kv version b7 set v = 7 where k = 1;
+>>> create branch b8 from master;
+Created Branch 8
+>>> update kv version b8 set v = 8 where k = 1;
+>>> create branch b9 from master;
+Created Branch 9
+>>> update kv version b9 set v = 9 where k = 1;
+>>> create branch b10 from master;
+Created Branch 10
+>>> update kv version b10 set v = 10 where k = 1;
+>>> select x.k, x.v from kv version b3 x;
+(1, 3)
+>>> select x.k, x.v from kv x;
+(0, 1)
+>>> branch;
+{["b10","master"],["b9","master"],["b8","master"],["b7","master"],["b6","master"],["b5","master"],["b4","master"],["b3","master"],["b2","master"],["b1","master"]}
+>>> quit
