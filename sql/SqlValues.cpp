@@ -919,7 +919,7 @@ cg_bool_t Char::compare(const Value & other, ComparisonMode mode) const
     {
         auto & codeGen = getThreadLocalCodeGen();
         //llvm::Value * strValue = codeGen->CreateGlobalString(std::string("AAAAAAAAAAAAAAAA"));
-        cg_voidptr_t arrayPtr = cg_voidptr_t( llvm::cast<llvm::Value>(codeGen->CreateAlloca(llvm::Type::getInt64Ty(codeGen.getLLVMContext()),2)) );
+        cg_voidptr_t arrayPtr = cg_voidptr_t( llvm::cast<llvm::Value>(codeGen->CreateAlloca(llvm::Type::getInt64Ty(codeGen.getLLVMContext()), cg_u64_t(2).llvmValue)) );
 
 
         size_t len = str.size();
@@ -946,7 +946,7 @@ cg_bool_t Char::compare(const Value & other, ComparisonMode mode) const
     value_op_t Text::castString(cg_ptr8_t str, cg_size_t length, SqlType type)
     {
         auto & codeGen = getThreadLocalCodeGen();
-        cg_voidptr_t arrayPtr = cg_voidptr_t( llvm::cast<llvm::Value>(codeGen->CreateAlloca(llvm::Type::getInt64Ty(codeGen.getLLVMContext()),2)) );
+        cg_voidptr_t arrayPtr = cg_voidptr_t( llvm::cast<llvm::Value>(codeGen->CreateAlloca(llvm::Type::getInt64Ty(codeGen.getLLVMContext()), cg_u64_t(2).llvmValue)) );
         auto & context = codeGen.getLLVMContext();
         llvm::FunctionType * funcTy = llvm::TypeBuilder<void (const char *, const char*, size_t), false>::get(context);
         llvm::CallInst * result = codeGen.CreateCall(&storeTextGen, funcTy, {arrayPtr, str, length});
@@ -963,7 +963,7 @@ cg_bool_t Char::compare(const Value & other, ComparisonMode mode) const
         auto & codeGen = getThreadLocalCodeGen();
 
         //llvm::Type * llvmType = toLLVMTy(type);
-        cg_voidptr_t arrayPtr = cg_voidptr_t( llvm::cast<llvm::Value>(codeGen->CreateAlloca(llvm::Type::getInt64Ty(codeGen.getLLVMContext()),2)) );
+        cg_voidptr_t arrayPtr = cg_voidptr_t( llvm::cast<llvm::Value>(codeGen->CreateAlloca(llvm::Type::getInt64Ty(codeGen.getLLVMContext()), cg_u64_t(2).llvmValue)) );
 
         //llvm::Value * begin = codeGen->CreateStructGEP(llvmType, ptr, 0);
         //llvm::Value * strPtr = codeGen->CreateGlobalString(std::string("AAAAAAAAAAAAAAAA"));
