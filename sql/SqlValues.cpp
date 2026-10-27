@@ -325,7 +325,7 @@ void Integer::store(llvm::Value * ptr) const
 {
 //    Functions::genPrintfCall("Integer::store ptr: %p value %d\n", ptr, _llvmValue);
     auto & codeGen = getThreadLocalCodeGen();
-    codeGen->CreateStore(_llvmValue, ptr);
+    codeGen->CreateStore(_llvmValue, codeGen->CreatePointerCast(ptr, _llvmValue->getType()->getPointerTo()));
 }
 
 cg_hash_t Integer::hash() const
@@ -400,7 +400,7 @@ value_op_t LongInteger::load(llvm::Value * ptr) {
 void LongInteger::store(llvm::Value * ptr) const {
 //    Functions::genPrintfCall("Integer::store ptr: %p value %d\n", ptr, _llvmValue);
     auto & codeGen = getThreadLocalCodeGen();
-    codeGen->CreateStore(_llvmValue, ptr);
+    codeGen->CreateStore(_llvmValue, codeGen->CreatePointerCast(ptr, _llvmValue->getType()->getPointerTo()));
 }
 
 cg_hash_t LongInteger::hash() const {
@@ -490,7 +490,7 @@ value_op_t Numeric::load(llvm::Value * ptr, SqlType type)
 void Numeric::store(llvm::Value * ptr) const
 {
     auto & codeGen = getThreadLocalCodeGen();
-    codeGen->CreateStore(_llvmValue, ptr);
+    codeGen->CreateStore(_llvmValue, codeGen->CreatePointerCast(ptr, _llvmValue->getType()->getPointerTo()));
 }
 
 cg_hash_t Numeric::hash() const
@@ -582,7 +582,7 @@ value_op_t Bool::load(llvm::Value * ptr)
 void Bool::store(llvm::Value * ptr) const
 {
     auto & codeGen = getThreadLocalCodeGen();
-    codeGen->CreateStore(_llvmValue, ptr);
+    codeGen->CreateStore(_llvmValue, codeGen->CreatePointerCast(ptr, _llvmValue->getType()->getPointerTo()));
 }
 
 cg_hash_t Bool::hash() const
@@ -764,7 +764,7 @@ void Char::store(llvm::Value * ptr) const
 
     // only Chars with a length of 1 need special treatment
     if (type.length == 1) {
-        codeGen->CreateStore(_llvmValue, ptr);
+        codeGen->CreateStore(_llvmValue, codeGen->CreatePointerCast(ptr, _llvmValue->getType()->getPointerTo()));
     } else {
         llvm::Type * valueTy = getLLVMType();
 
@@ -1253,7 +1253,7 @@ value_op_t Date::load(llvm::Value * ptr)
 void Date::store(llvm::Value * ptr) const
 {
     auto & codeGen = getThreadLocalCodeGen();
-    codeGen->CreateStore(_llvmValue, ptr);
+    codeGen->CreateStore(_llvmValue, codeGen->CreatePointerCast(ptr, _llvmValue->getType()->getPointerTo()));
 }
 
 cg_hash_t Date::hash() const
@@ -1337,7 +1337,7 @@ value_op_t Timestamp::load(llvm::Value * ptr)
 void Timestamp::store(llvm::Value * ptr) const
 {
     auto & codeGen = getThreadLocalCodeGen();
-    codeGen->CreateStore(_llvmValue, ptr);
+    codeGen->CreateStore(_llvmValue, codeGen->CreatePointerCast(ptr, _llvmValue->getType()->getPointerTo()));
 }
 
 cg_hash_t Timestamp::hash() const

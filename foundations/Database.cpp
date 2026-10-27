@@ -132,7 +132,7 @@ static cg_bool_t isSet_gen(BitmapTable & table, cg_tid_t tid, cg_unsigned_t colu
     // calculate section
     cg_ptr8_t sectionPtr( tablePtr + byteIndex.llvmValue );
     cg_u8_t section( codeGen->CreateLoad(cg_u8_t::getType(), sectionPtr) );
-    cg_u8_t shifted( codeGen->CreateLShr(section, indicatorIndex) );
+    cg_u8_t shifted( codeGen->CreateLShr(section, codeGen->CreateTrunc(indicatorIndex, cg_u8_t::getType())) );
     cg_bool_t result( codeGen->CreateTrunc(shifted, cg_bool_t::getType()) );
     return result;
 }
