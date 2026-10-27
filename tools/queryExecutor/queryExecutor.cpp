@@ -90,6 +90,11 @@ namespace QueryExecutor {
 
         const auto compilationStart = std::chrono::high_resolution_clock::now();
 
+        // Check the generated code before compiling it and print what is wrong.
+        if (llvm::verifyModule(moduleGen.getModule(), &llvm::errs())) {
+            llvm::errs() << "[LLVM verifier] generated code is invalid\n";
+        }
+
         llvm::EngineBuilder eb(moduleGen.finalizeModule());
         eb.setOptLevel(llvm::CodeGenOpt::None);
 //    eb.setOptLevel( llvm::CodeGenOpt::Less );
@@ -138,6 +143,11 @@ namespace QueryExecutor {
 #endif // DISABLE_OPTIMIZATIONS
 
         const auto compilationStart = std::chrono::high_resolution_clock::now();
+
+        // Check the generated code before compiling it and print what is wrong.
+        if (llvm::verifyModule(moduleGen.getModule(), &llvm::errs())) {
+            llvm::errs() << "[LLVM verifier] generated code is invalid\n";
+        }
 
         llvm::EngineBuilder eb(moduleGen.finalizeModule());
          eb.setOptLevel( llvm::CodeGenOpt::None );
