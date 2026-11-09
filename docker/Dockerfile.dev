@@ -2,8 +2,17 @@
 FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        cmake g++ make git ca-certificates \
+        cmake g++ make git ca-certificates curl \
         llvm-7 llvm-7-dev zlib1g-dev libtinfo-dev \
         libboost-dev libreadline-dev gdb \
     && rm -rf /var/lib/apt/lists/*
+# Pistache (HTTP library for the `server` target), pinned to Jan 2021,
+# the same time as TardisDB's server branch; newer versions build with meson.
+RUN git clone https://github.com/pistacheio/pistache.git /tmp/pistache \
+    && cd /tmp/pistache && git checkout 8f278db && git submodule update --init \
+    && mkdir build && cd build \
+    && cmake -DCMAKE_BUILD_TYPE=Release -DPISTACHE_BUILD_TESTS=OFF -DPISTACHE_BUILD_EXAMPLES=OFF \
+             -DCMAKE_CXX_FLAGS="-include cstdint -include cstddef -include limits" .. \
+    && make -j"$(nproc)" && make install && ldconfig \
+    && rm -rf /tmp/pistache
 WORKDIR /src
