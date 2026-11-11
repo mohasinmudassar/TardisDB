@@ -7,3 +7,7 @@ tables/
 # build dirs
 cmake-build-*/
 build*/
+__pycache__/
+*.pyc
+.DS_Store
+build-server/
