@@ -42,7 +42,7 @@ cur.execute("insert into users (id, name) values (%s, %s)", (1, "alice"))
 cur.execute("insert into users (id, name) values (%s, %s)", (2, "bob"))
 cur.execute("select u.id, u.name from users u")
 check("master rows", sorted(cur.fetchall()), [(1, "alice"), (2, "bob")])
-check("column order follows SELECT", cur.description, ["id", "name"])
+check("column order follows SELECT", cur.columns, ["id", "name"])
 
 conn.create_branch("b1")
 conn.use_branch("b1")
@@ -86,6 +86,10 @@ t0 = time.perf_counter()
 cur.execute("select u.id, u.name from users u where u.id = %s", (1,))
 wall_ms = (time.perf_counter() - t0) * 1000
 print(f"     one point read: {wall_ms:.2f} ms round trip; server: {cur.timing}")
+
+with conn.cursor() as c2:
+    c2.execute("insert into users (id, name) values (%s, %s)", (5, "fay"))
+    check("cursor works as context manager; insert has no result set", c2.description, None)
 
 conn.close()
 try:

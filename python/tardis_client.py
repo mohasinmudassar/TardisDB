@@ -114,7 +114,8 @@ def _convert(value):
 class Cursor:
     def __init__(self, conn):
         self.conn = conn
-        self.description = None   # list of column names of the last result
+        self.description = None   # DB-API: one 7-tuple per column for a SELECT, else None
+        self.columns = []         # column names of the last result
         self.rows = []
         self.timing = {}          # ms per phase of the last statement, from the server
         self.rowcount = -1
@@ -139,9 +140,11 @@ class Cursor:
             idx = [columns.index(name) for name in wanted]
             columns = wanted
             raw_rows = [[r[i] for i in idx] for r in raw_rows]
-        self.description = columns
-        self.rows = [tuple(_convert(v) for v in r) for r in raw_rows]
-        self.rowcount = len(self.rows)
+        self.columns = columns
+        is_select = re.match(r"\s*select\b", last_statement, re.I) is not None
+        self.description = [(c, None, None, None, None, None, None) for c in columns] if is_select else None
+        self.rows = [tuple(_convert(v) for v in r) for r in raw_rows] if is_select else []
+        self.rowcount = len(self.rows) if is_select else -1
         self.timing = {k[:-4]: v for k, v in result.items() if k.endswith("time")}
 
     def fetchall(self):
@@ -153,6 +156,13 @@ class Cursor:
 
     def close(self):
         pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.close()
+        return False
 
 
 class Connection:
